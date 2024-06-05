@@ -13,7 +13,7 @@ def generate_customer(customer_id, fake, n_customers: int = 5000):
     
     n_customers = max(round(n_customers*0.995), 1000-5)
 
-    mean_duration = np.round(np.random.uniform(1,60*30)) 
+    mean_duration = np.round(np.random.uniform(2,61416)) 
     std_duration = mean_duration/2 
     mean_nb_calls_per_day = np.round(np.random.uniform(1,40))
     
