@@ -35,3 +35,9 @@ source ./.venv/bin/activate
 
 pip install -r ../requirements.txt
 ```
+
+5. Run the Generation
+
+```
+python main.py
+```
