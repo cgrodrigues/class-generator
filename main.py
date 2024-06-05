@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import time
 from datetime import datetime, timedelta
+import argparse
+
 
 
 
@@ -106,41 +108,53 @@ def generate_calls(customer_profile, start_datetime):
                     
     customer_calls = pd.DataFrame(customer_calls)
     
-    print(customer_calls)
-    
     return customer_calls
     
-def main(nb_days, start_date, path):
+def main():
+    
+    parser = argparse.ArgumentParser(
+                    prog='SyntheticDataGenerator',
+                    description='Generate synthetic SS7 data',
+                    epilog='\tCopyright (c) WE DO CONSULTING - SISTEMAS DE INFORMAÇÃO, S.A \n\tAll Rights Reserved')
+    
+    parser.add_argument('-d', '--days', help='Number of days to generate data', required=True, type=int)
+    parser.add_argument('-s', '--start_date', help='Start date in format "YYYY-MM-DD" to generate data', required=True)
+    parser.add_argument('-p', '--path', help='Output path of the parquet file with the generated data', required=True)
+    
+    args = parser.parse_args()
 
     
-    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    start_date = datetime.strptime(args.start_date, "%Y-%m-%d")
     
     start_time=time.time()
     customer_table = generate_customer_profiles_table(n_customers = 1000)
     print("Time to generate customer profiles table: {0:.2}s".format(time.time()-start_time))
     
     start_datetime = start_date
-    for day in range(nb_days):
+    for day in range(args.days):
         print(f"Day: {start_datetime}")
         
         start_time=time.time()
         
         start_datetime = start_date + timedelta(days=day)
         
-        calls_df = customer_table.groupby('customer_id').apply(lambda x : generate_calls(x.iloc[0], start_datetime=start_datetime)).reset_index(drop=True)
-       
+        columns = customer_table.columns
+        
+        calls_df = customer_table.groupby('customer_id', group_keys=True)[columns].apply(lambda x : generate_calls(x.iloc[0], start_datetime=start_datetime)).reset_index(drop=True)
+        
         print("Time to generate calls recors: {0:.2}s".format(time.time()-start_time))
     
         calls_df=calls_df.sort_values('date')
+        
+        # Drop columns that start with '_'
+        calls_df = calls_df.loc[:, ~calls_df.columns.str.startswith('_')]
  
         # calls_df.to_parquet(path, partition_cols=['date'], index=False)
-        calls_df.to_parquet(path, partition_cols=['file'], index=False)
+        calls_df.to_parquet(args.path, partition_cols=['file'], index=False)
         
         print(f"Save parquet file: HOUR_KEY_DATE={start_datetime.strftime('%Y%m%d%H%M%S')}")
 
 
 if __name__ == "__main__":
-    main(nb_days =  1,
-        start_date="2024-02-23",
-        path ="./data/output")
+    main()
     

@@ -39,5 +39,5 @@ pip install -r ../requirements.txt
 5. Run the Generation
 
 ```
-python main.py
+python main.py -d 1 -s 2024-02-23 -p ./data/output
 ```
