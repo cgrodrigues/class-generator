@@ -85,19 +85,18 @@ def generate_calls(customer_profile, start_datetime):
                 
                 dgss7 = DataGeneratorSS7()
 
-                rec = dgss7.generate_record(record={'date': curr_start_datetime, 
-                                                'imsi': customer_profile.imsi, 
-                                                'Partner_MCC':customer_profile.partner_mcc,
-                                                'Partner_MNC':customer_profile.partner_mnc, 
-                                                'starttime': datetime.strptime('2022-11-25 04:57:30', '%Y-%m-%d %H:%M:%S') ,
-                                                'endtime': datetime.strptime('2022-11-25 04:58:11', '%Y-%m-%d %H:%M:%S'),
-                                                'mean_duration': customer_profile.mean_duration,
-                                                'std_duration': customer_profile.std_duration} ,
-                                        methods=[DataGeneratorSS7.msgtype, 
-                                                 DataGeneratorSS7.starttime, 
-                                                 DataGeneratorSS7.endtime,
-                                                 DataGeneratorSS7.transaction_latency_ms,
-                                                 DataGeneratorSS7.file])
+                rec = dgss7.generate_record(record={'_date': curr_start_datetime, 
+                                                    '_mean_duration': customer_profile.mean_duration,
+                                                    '_std_duration': customer_profile.std_duration,
+                                                    'date': curr_start_datetime.strftime('%Y-%m-%d %H:%M:%S'), 
+                                                    'imsi': customer_profile.imsi, 
+                                                    'Partner_MCC':customer_profile.partner_mcc,
+                                                    'Partner_MNC':customer_profile.partner_mnc} ,
+                                            methods=[DataGeneratorSS7.msgtype, 
+                                                    DataGeneratorSS7.starttime, 
+                                                    DataGeneratorSS7.endtime,
+                                                    DataGeneratorSS7.transaction_latency_ms,
+                                                    DataGeneratorSS7.file])
                 
         
                 customer_calls.append(rec)
@@ -127,8 +126,8 @@ def main(nb_days, start_date, path):
         
         start_datetime = start_date + timedelta(days=day)
         
-        calls_df = customer_table.groupby('customer_id').apply(lambda x : generate_calls(x.iloc[0], 
-                                                                                         start_datetime=start_datetime)).reset_index(drop=True)
+        calls_df = customer_table.groupby('customer_id').apply(lambda x : generate_calls(x.iloc[0], start_datetime=start_datetime)).reset_index(drop=True)
+       
         print("Time to generate calls recors: {0:.2}s".format(time.time()-start_time))
     
         calls_df=calls_df.sort_values('date')

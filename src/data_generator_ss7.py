@@ -15,19 +15,19 @@ class DataGeneratorSS7(DataGenerator):
             
         
     def starttime(self, record): 
-        return record['date']
+        return record['_date']
         
         
     def endtime(self, record):
-        duration = np.round(np.random.normal(record['mean_duration'], record['std_duration'])) 
+        duration = np.round(np.random.normal(record['_mean_duration'], record['_std_duration'])) 
         return record['starttime'] + timedelta(seconds=duration)
     
     def file(self, record):
-        start_of_day = datetime(record['date'].year, record['date'].month, record['date'].day)
-        time_diff = record['date'] - start_of_day
+        start_of_day = datetime(record['_date'].year, record['_date'].month, record['_date'].day)
+        time_diff = record['_date'] - start_of_day
         period_number = int(time_diff.total_seconds() // 300)  # 300 seconds = 5 minutes
 
-        return f"{record['date'].year}.{record['date'].month:02d}.{record['date'].day:02d}.{period_number}"
+        return f"{record['_date'].year}.{record['_date'].month:02d}.{record['_date'].day:02d}.{period_number}"
     
     
 
