@@ -29,6 +29,10 @@ class DataGeneratorSS7(DataGenerator):
 
         return f"{record['_date'].year}.{record['_date'].month:02d}.{record['_date'].day:02d}.{period_number}"
     
+    def numOfIncomingMSU(self, record):
+        return np.random.choice([1,3,2,5,4, -1], p=[0.77248699, 0.09273389, 0.08847164, 0.02390864, 0.01148866, 0.01091018])
+    
+    
     
 
 

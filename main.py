@@ -96,7 +96,8 @@ def generate_calls(customer_profile, start_datetime):
                                                     DataGeneratorSS7.starttime, 
                                                     DataGeneratorSS7.endtime,
                                                     DataGeneratorSS7.transaction_latency_ms,
-                                                    DataGeneratorSS7.file])
+                                                    DataGeneratorSS7.file,
+                                                    DataGeneratorSS7.numOfIncomingMSU])
                 
         
                 customer_calls.append(rec)
